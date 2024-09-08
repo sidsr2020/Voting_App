@@ -1,55 +1,32 @@
 const express = require('express');
 const router = express.Router();
-const user = require('./../models/user');
+const elector = require('./../models/electors');
 const { jwtAuthMiddleware, generateToken } = require('./../jwt');
-// POST route to add a user
-router.post('/signup', async (req, res) => {
-    try {
-        const data = req.body;// Assuming the request body contains the user data
-        // create a new user document using the Mongoose Model
-        const newuser = new user(data);
-        // Save the new user to the database
-        const response = await newuser.save();
-        console.log('data saved');
-        const payload = {
-            id: response.id
-        }
-        console.log(JSON.stringify(payload));
-        const token = generateToken(payload);
-        console.log("Token is :", token);
-        res.status(200).json({ response: response, token: token });
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({ error: 'Internal Server Error' });
+
+const checkAdminRole = async (userID) => {
+    const user = await user.findById(userID);
+    if (user.role === 'admin') {
+        return true;
     }
-})
-// Login Route
-router.post('/login', async (req, res) => {
+    return false;
+}
+// POST route to add an elector
+router.post('/electors', async (req, res) => {
     try {
-        // Extract the  aadharCardNumber and password from the request body
-        const { aadharCardNumber, password } = req.body;
-        // Find the user by the aadharCardNumber in the DataBase
-        const user = await user.findOne({ aadharCardNumber: aadharCardNumber });
-        // If user does not exist and password does not match, return error
-        if (!user || !await user.comparePassword(password)) {
-            return res.status(401).json({ error: 'Invalid username or password' });
-        }
-        // If user exists and password matches, return success
-        // Generate Token
-        const payload = {
-            id: user.id
-        }
-        const token = generateToken(payload);
-        console.log("Token is :", token);
-        // Return token as Response
-        res.status(200).json({ token: token });
+        const data = req.body;// Assuming the request body contains the elector data
+        // create a new elector document using the Mongoose Model
+        const newElector = new elector(data);
+        // Save the new elector to the database
+        const response = await newElector.save();
+        console.log('data saved');
+        res.status(200).json({ response: response});
     } catch (err) {
         console.log(err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 })
 // Profile Route
-router.get('/profile', jwtAuthMiddleware, async (req, res) => {
+router.get('/p', jwtAuthMiddleware, async (req, res) => {
     try {
         const userData = req.user;
         const userId = userData.id;
