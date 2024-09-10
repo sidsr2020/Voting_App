@@ -2,17 +2,22 @@ const express = require('express');
 const router = express.Router();
 const elector = require('./../models/electors');
 const { jwtAuthMiddleware, generateToken } = require('./../jwt');
-
+const User = require('./../models/user');
+// Create elector routes
 const checkAdminRole = async (userID) => {
-    const user = await user.findById(userID);
-    if (user.role === 'admin') {
-        return true;
+    try {
+        const user = await User.findById(userID);
+        if (user.role === 'admin') {
+            return true;
+        }
+    } catch (err) {
+        return false;
     }
-    return false;
 }
 // POST route to add an elector
-router.post('/electors', async (req, res) => {
+router.post('/', jwtAuthMiddleware ,async (req, res) => {
     try {
+        if (!await checkAdminRole(req.user.id)) return res.status(403).json({ message: 'user does not have admin role' });
         const data = req.body;// Assuming the request body contains the elector data
         // create a new elector document using the Mongoose Model
         const newElector = new elector(data);
@@ -25,37 +30,45 @@ router.post('/electors', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 })
-// Profile Route
-router.get('/p', jwtAuthMiddleware, async (req, res) => {
+
+router.put('/:electorID', jwtAuthMiddleware ,async (req, res) => {
     try {
-        const userData = req.user;
-        const userId = userData.id;
-        const user = await Person.findById(userId);
-        res.status(200).json({ user });
+        if (!await checkAdminRole(req.user.id)) return res.status(403).json({message: 'user does not have admin role'});
+        const electorID = req.params.electorID; // Extract the id from the URL parameter
+        const updatedElectorData = req.body; // Updated data for the elector
+        // Update the person in the database
+        const response = await elector.findByIdAndUpdate(electorID, updatedElectorData , {
+            new: true,
+            runValidators: true,
+        });
+        if (!response) {
+            return res.status(404).json({ error: 'elector not found' });
+        }
+        console.log('elector data updated');
+        res.status(200).json(response);
     } catch (err) {
         console.log(err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 })
 
-router.put('/profile/password', jwtAuthMiddleware, async (req, res) => {
+router.delete('/:electorID', jwtAuthMiddleware ,async (req, res) => {
     try {
-        const userId = req.user.id; // Extract the id from the token
-        const { currentPassword, newPassword } = req.body; // Extract the current and new Password from request body
-        // Find the user by userId
-        const user = await user.findById(userId);
-        if (!await user.comparePassword(currentPassword)) {
-            return res.status(401).json({ error: 'Invalid password' });
+        if (!await checkAdminRole(req.user.id)) return res.status(403).json({message: 'user does not have admin role'});
+        const electorID = req.params.electorID; // Extract the id from the URL parameter
+        // Update the person in the database
+        const response = await elector.findByIdAndDelete(electorID);
+        if (!response) {
+            return res.status(404).json({ error: 'elector not found' });
         }
-        // update the user's password
-        user.password = newPassword;
-        await user.save();
-        console.log('password updated');
-        res.status(200).json({ message: 'Password updated successfully' });
+        console.log('elector deleted');
+        res.status(200).json(response);
     } catch (err) {
         console.log(err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 })
+// Creating voting routes 
+// let's start voting
 
 module.exports = router;
