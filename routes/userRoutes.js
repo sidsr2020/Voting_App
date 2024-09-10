@@ -16,7 +16,7 @@ router.post('/signup', async (req, res) => {
             return res.status(400).json({ error: 'Aadhar Card Number must be exactly 12 digits' });
         }
         // Check if a user with the same Aadhar Card Number already exists
-        const existingUser = await User.findOne({ aadharCardNumber: data.aadharCardNumber });
+        const existingUser = await user.findOne({ aadharCardNumber: data.aadharCardNumber });
         if (existingUser) {
             return res.status(400).json({ error: 'User with the same Aadhar Card Number already exists' });
         }
