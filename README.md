@@ -1,13 +1,13 @@
 # Voting Application
 
-This is a backend application for a voting system where users can vote for candidates. It provides functionalities for user authentication, candidate management, and voting.
+This is a backend application for a voting system where users can vote for electors. It provides functionalities for user authentication, elector management, and voting.
 
 ## Features
 
 - User sign up and login with Aadhar Card Number and password
-- User can view the list of candidates
-- User can vote for a candidate (only once)
-- Admin can manage candidates (add, update, delete)
+- User can view the list of electors
+- User can vote for an elector (only once)
+- Admin can manage electors (add, update, delete)
 - Admin cannot vote
 
 ## Technologies Used
@@ -38,19 +38,19 @@ This is a backend application for a voting system where users can vote for candi
 ## Candidates
 
 ### Get Candidates
-- `GET /candidates`: Get the list of candidates
+- `GET /electors`: Get the list of candidates
 
 ### Add Candidate
-- `POST /candidates`: Add a new candidate (Admin only)
+- `POST /electors`: Add a new candidate (Admin only)
 
 ### Update Candidate
-- `PUT /candidates/:id`: Update a candidate by ID (Admin only)
+- `PUT /electors/:id`: Update a candidate by ID (Admin only)
 
 ### Delete Candidate
-- `DELETE /candidates/:id`: Delete a candidate by ID (Admin only)
+- `DELETE /electors/:id`: Delete a candidate by ID (Admin only)
 
 ## Voting
 
 ### Get Vote Count
-- `GET /candidates/vote/count`: Get the count of votes for each candidate
+- `GET /electors/vote/count`: Get the count of votes for each candidate
 - `PUT /users/profile/password`: Change user password
