@@ -35,22 +35,32 @@ This is a backend application for a voting system where users can vote for elect
 ### Login
 - `POST /login`: Login a user
 
-## Candidates
+## electors
 
-### Get Candidates
-- `GET /electors`: Get the list of candidates
+### Get Electors
+- `GET /electors`: Get the list of electors
 
-### Add Candidate
-- `POST /electors`: Add a new candidate (Admin only)
+### Add Elector
+- `POST /electors`: Add a new elector (Admin only)
 
-### Update Candidate
-- `PUT /electors/:id`: Update a candidate by ID (Admin only)
+### Update Elector
+- `PUT /electors/:id`: Update an elector by ID (Admin only)
 
-### Delete Candidate
-- `DELETE /electors/:id`: Delete a candidate by ID (Admin only)
+### Delete Elector
+- `DELETE /electors/:id`: Delete an elector by ID (Admin only)
 
 ## Voting
 
 ### Get Vote Count
-- `GET /electors/vote/count`: Get the count of votes for each candidate
+- `GET /electors/vote/count`: Get the count of votes for each elector
+
+### Vote for Elector
+- `POST /electors/vote/:id`: Vote for an elector (User only)
+
+## User Profile
+
+### Get Profile
+- `GET /users/profile`: Get user profile information
+
+### Change Password
 - `PUT /users/profile/password`: Change user password
